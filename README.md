@@ -3,10 +3,18 @@ Markov chain to generate "art"
 
 Generated with the default parameters:
 
-![art-1](https://github.com/bentrevett/art/blob/master/art-1.png "art-1")
+<p align="center">
+  <img src="https://github.com/bentrevett/art/blob/master/art-1.png" alt="art-1"/>
+</p>
 
-![art-2](https://github.com/bentrevett/art/blob/master/art-2.png "art-2")
+<p align="center">
+  <img src="https://github.com/bentrevett/art/blob/master/art-2.png" alt="art-2"/>
+</p>
 
-![art-3](https://github.com/bentrevett/art/blob/master/art-3.png "art-3")
+<p align="center">
+  <img src="https://github.com/bentrevett/art/blob/master/art-3.png" alt="art-3"/>
+</p>
 
-![art-4](https://github.com/bentrevett/art/blob/master/art-4.png "art-4")
+<p align="center">
+  <img src="https://github.com/bentrevett/art/blob/master/art-4.png" alt="art-4"/>
+</p>
