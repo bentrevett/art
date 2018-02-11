@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.colors
 import matplotlib.image as mpimg
 
-parser = argparse.ArgumentParser(description='Generate simple "art" generation')
+parser = argparse.ArgumentParser(description='Generate simple "art" from a Markov chain')
 parser.add_argument('-s', type=int, default=256,
                     help='size of the image')
 parser.add_argument('-c', nargs='+', default=['b', 'k', 'w'],
