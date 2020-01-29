@@ -4,38 +4,42 @@ import matplotlib.colors
 import matplotlib.image as mpimg
 
 parser = argparse.ArgumentParser(description='Generate simple "art" from a Markov chain')
-parser.add_argument('-s', type=int, default=256,
-                    help='size of the image')
-parser.add_argument('-c', nargs='+', default=['b', 'k', 'w'],
+parser.add_argument('--size', type=int, default=256)
+parser.add_argument('--colors', nargs='+', default=['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w'],
                     help='which colours to use, available: [\'b\', \'g\', \'r\', \'c\', \'m\', \'y\', \'k\', \'w\']')
-parser.add_argument('-i', type=int, default=300,
-                    help='how much extra inertia to have on a colour when generating that colour')
-parser.add_argument('-n', type=int, default=1,
-                    help='how many colours get the extra intertia specified by -i')
-parser.add_argument('-g', type=int, default=10,
+parser.add_argument('--bias_min', type=int, default=10,
+                    help='minimum amount to bias a transition')
+parser.add_argument('--bias_max', type=int, default=25,
+                    help='maximum amount to bias a transition')
+parser.add_argument('--n_biased', type=int, default=4,
+                    help='how many transitions to bias')
+parser.add_argument('--n_images', type=int, default=10,
                     help='how many images to generate')
+parser.add_argument('--seed', type=int, default=None,
+                    help='random seed')
 args = parser.parse_args()
+
+if args.seed is not None:
+    np.random.seed(args.seed)
 
 #making sure colours are correct
 
-available_colours = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
+available_colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 
-colours = args.c
-
-for c in colours:
-    if c not in available_colours:
-        raise ValueError(f'Colours must be one of {available_colours}, you gave: {c}')
+for color in args.colors:
+    if color not in available_colors:
+        raise ValueError(f'Colors must be one of {available_colors}, you gave: {color}')
 
 #generating transition probabilities
 
-for n in range(args.g):
+for n in range(args.n_images):
 
-    transition_probs = np.ones((len(colours),len(colours)))
+    transition_probs = np.ones((len(args.colors),len(args.colors)))
 
     for i in transition_probs:
-        for _ in range(args.n):
+        for _ in range(args.n_biased):
             idx = np.random.randint(len(i))
-            i[idx] = args.i
+            i[idx] = np.random.randint(args.bias_min, args.bias_max)
 
     #normalize transition probabilities
 
@@ -44,7 +48,7 @@ for n in range(args.g):
         e_x = np.exp(x - np.max(x))
         return e_x / e_x.sum(axis=0)
 
-    normalised_transition_probs = softmax(transition_probs)
+    normalized_transition_probs = softmax(transition_probs)
 
     #generate the "coded" image, each pixel is an integer representing a colour
 
@@ -52,13 +56,13 @@ for n in range(args.g):
         colour = colours[int(code)]
         return np.array(matplotlib.colors.to_rgb(colour))
 
-    coded_image = np.zeros(args.s**2)
+    coded_image = np.zeros(args.size**2)
 
-    start = np.random.randint(len(colours))
+    start = np.random.randint(len(args.colors))
 
     for i, _ in enumerate(coded_image):
         
-        transition = np.random.choice(len(colours), p=normalised_transition_probs[:,start])
+        transition = np.random.choice(len(args.colors), p=normalized_transition_probs[:,start])
         
         coded_image[i] = transition
         
@@ -66,13 +70,13 @@ for n in range(args.g):
 
     #convert the coded image into a real image
 
-    image = np.zeros((args.s**2, 3))
+    image = np.zeros((args.size**2, 3))
 
     for i, code in enumerate(coded_image):
         
-        image[i] = colour_lookup(colours, code)
+        image[i] = colour_lookup(args.colors, code)
 
-    image = image.reshape((args.s, args.s, 3))
+    image = image.reshape((args.size, args.size, 3))
 
     mpimg.imsave(f'art-{n}.png', image)
 
